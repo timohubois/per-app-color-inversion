@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Per-App Color Inversion</string>
+    <string name="service_name">Per-app color inversion</string>
+    <string name="service_description">Turns Android color inversion on only while selected apps are in the foreground. It does not read window content, collect data, use the network, or store activity history.</string>
+    <string name="explanation">Automatically invert colors only while selected apps are in the foreground.</string>
+    <string name="enable_automatic_inversion">Enable automatic inversion</string>
+    <string name="service_enabled">Accessibility service: enabled</string>
+    <string name="service_disabled">Accessibility service: disabled</string>
+    <string name="open_accessibility_settings">Open accessibility settings</string>
+    <string name="invert_these_apps">Invert these apps</string>
+</resources>

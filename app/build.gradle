@@ -1,0 +1,47 @@
+import java.util.Properties
+
+plugins {
+    id 'com.android.application'
+}
+
+def signingProperties = new Properties()
+def signingPropertiesPath = System.getenv('APP_SIGNING_PROPERTIES')
+def signingPropertiesFile = signingPropertiesPath ? file(signingPropertiesPath) : null
+if (signingPropertiesFile?.isFile()) {
+    signingPropertiesFile.withInputStream { signingProperties.load(it) }
+}
+
+android {
+    namespace 'io.github.timohubois.perappcolorinversion'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'io.github.timohubois.perappcolorinversion'
+        minSdk 31
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        if (signingPropertiesFile?.isFile()) {
+            release {
+                storeFile file(signingProperties['storeFile'])
+                storePassword signingProperties['storePassword']
+                keyAlias signingProperties['keyAlias']
+                keyPassword signingProperties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            if (signingPropertiesFile?.isFile()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
