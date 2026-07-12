@@ -20,8 +20,7 @@ Built against Android 15 (API 35). Tested on Android 12 on the Mudita Kompakt.
 ## Build
 
 ```sh
-NIXPKGS_ALLOW_UNFREE=1 NIXPKGS_ACCEPT_ANDROID_SDK_LICENSE=1 \
-  nix-shell -I nixpkgs=flake:nixpkgs --run './gradlew --no-daemon assembleDebug'
+nix develop --command ./gradlew --no-daemon assembleDebug
 ```
 
 ## Install

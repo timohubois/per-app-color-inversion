@@ -15,7 +15,7 @@
       };
       androidSdk = pkgs.androidenv.composeAndroidPackages {
         platformVersions = [ "35" ];
-        buildToolsVersions = [ "35.0.0" ];
+        buildToolsVersions = [ "34.0.0" "35.0.0" ];
       };
     in {
       devShells.${system}.default = pkgs.mkShell {
