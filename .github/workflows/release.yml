@@ -1,6 +1,7 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -38,7 +39,10 @@ jobs:
       - name: Check version
         run: |
           version=$(sed -n "s/.*versionName '\([^']*\)'.*/\1/p" app/build.gradle)
-          test "v$version" = "$GITHUB_REF_NAME"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            test "v$version" = "$GITHUB_REF_NAME"
+          fi
 
       - name: Build signed APK
         env:
@@ -48,16 +52,24 @@ jobs:
       - name: Verify and package APK
         run: |
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/release/app-release.apk
-          cp app/build/outputs/apk/release/app-release.apk "per-app-color-inversion-${GITHUB_REF_NAME#v}.apk"
-          sha256sum "per-app-color-inversion-${GITHUB_REF_NAME#v}.apk" > SHA256SUMS
+          cp app/build/outputs/apk/release/app-release.apk "per-app-color-inversion-$VERSION.apk"
+          sha256sum "per-app-color-inversion-$VERSION.apk" > SHA256SUMS
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signed-release-${{ env.VERSION }}
+          path: |
+            per-app-color-inversion-${{ env.VERSION }}.apk
+            SHA256SUMS
 
       - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            "per-app-color-inversion-${GITHUB_REF_NAME#v}.apk" \
+            "per-app-color-inversion-$VERSION.apk" \
             SHA256SUMS \
             --verify-tag \
             --generate-notes \
-            --title "Per-App Color Inversion ${GITHUB_REF_NAME#v}"
+            --title "Per-App Color Inversion $VERSION"
